@@ -8,10 +8,11 @@ A simple wrapper around the official Sendgrid library to make sending emails eas
 
 This wrapper is not meant as a full blown replacement of the
 [official Sendgrid library](https://www.npmjs.com/package/sendgrid). Instead,
-it is meant for those use cases where you just want to send an email *quickly*
+it is meant for those use cases where you just want to send one or more emails *quickly*
 with a few lines of code, without needing to use elaborate helper classes or remember the Sendgrid Request JSON structure by heart.
 
 ## Installation
+Use `npm` or `yarn` to install:
 
 ```
 npm install sendgrid-mailer --save
@@ -21,11 +22,14 @@ npm install sendgrid-mailer --save
 yarn add sendgrid-mailer
 ```
 
+## Requirements
+Written in ES6 for Node 6+.
+
 ## Usage
 
 ### Configure mailer
 
-Configure the API somewhere once:
+Configure the API key somewhere once:
 ```js
 require('sendgrid-mailer').config(API_KEY);
 ```
@@ -65,7 +69,6 @@ mailer.send(email)
 It accepts both a single email or an array of emails (sent individually):
 
 ```js
-
 //Construct an array of emails
 const emails = [email1, email2, email3];
 
