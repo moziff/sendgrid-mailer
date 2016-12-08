@@ -8,7 +8,7 @@ const Mail = sendgrid.mail.Mail;
 const Email = sendgrid.mail.Email;
 const Content = sendgrid.mail.Content;
 const Personalization = sendgrid.mail.Personalization;
-const parseIdentity = require('./helpers/parse-identity');
+const splitNameEmail = require('./split-name-email');
 
 /**
  * Interface
@@ -27,6 +27,13 @@ module.exports = {
    * Configure
    */
   config(options) {
+
+    //String given? Assume only API key
+    if (typeof options === 'string') {
+      options = {apiKey: options};
+    }
+
+    //Merge options
     Object.assign(this.options, options || {});
   },
 
@@ -52,7 +59,44 @@ module.exports = {
   },
 
   /**
-   * Create a Sendgrid Mail object
+   * Create Sendgrid Email instance
+   */
+  createEmail(identity) {
+
+    //Already an Email instance?
+    if (identity instanceof Email) {
+      return identity;
+    }
+
+    //Initialize
+    let name, email;
+
+    //Extract name and email if string given
+    if (typeof identity === 'string') {
+      [name, email] = splitNameEmail(identity);
+    }
+
+    //If object, extract
+    else if (typeof identity === 'object' && identity !== null) {
+      ({name, email}) = identity;
+    }
+
+    //Invalid
+    else {
+      throw new Error('Invalid identity provided: ' + identity);
+    }
+
+    //Must have email
+    if (!email) {
+      throw new Error('Email required for identity: ' + identity);
+    }
+
+    //Create instance
+    return new Email(email, name);
+  },
+
+  /**
+   * Create a Sendgrid Mail instance
    */
   createMail(data) {
 
@@ -64,37 +108,23 @@ module.exports = {
     //Extract data
     const {to, from, subject, text, html} = data;
 
-    //Parse sender and recipient identities
-    const sender = parseIdentity(from);
-    const recipient = parseIdentity(to);
-
-    //Must have recipient
-    if (!recipient) {
-      throw new Error('Invalid or no recipient specified');
-    }
-
-    //Must have sender
-    if (!sender) {
-      throw new Error('Invalid or no sender specified');
-    }
+    //Convert sender and recipient to Email instances
+    const sender = this.createEmail(from);
+    const recipient = this.createEmail(to);
 
     //Prepare objects
     const mail = new Mail();
     const recipients = new Personalization();
 
     //Add recipient
-    recipients.addTo(new Email(recipient.email, recipient.name));
+    recipients.addTo(recipient);
 
-    //Set personalisation and sender
+    //Set personalisation, sender and subject
     mail.addPersonalization(recipients);
-    mail.setFrom(new Email(sender.email, sender.name));
+    mail.setFrom(sender);
+    mail.setSubject(subject || '');
 
-    //Set subject
-    if (subject) {
-      mail.setSubject(subject);
-    }
-
-    //Add content
+    //Add content as applicable
     if (text) {
       mail.addContent(new Content('text/plain', text));
     }
@@ -107,9 +137,12 @@ module.exports = {
   },
 
   /**
-   * Create a request to send an email
+   * Create a Sendgrid Request instance
    */
   createRequest(mail) {
+
+    //Ensure it's a Mail instance
+    mail = this.createMail(mail);
 
     //Build request
     const request = this.sg.emptyRequest();
@@ -127,22 +160,15 @@ module.exports = {
   send(mails) {
 
     //Load sendgrid instance on demand
-    try {
-      this.load();
-    }
-    catch (e) {
-      return Promise.reject(e);
-    }
+    this.load();
 
     //Convert emails to array
     if (!Array.isArray(mails)) {
       mails = [mails];
     }
 
-    //Convert to Sendgrid Mail instances and then requests
-    const requests = mails
-      .map(mail => this.createMail(mail))
-      .map(mail => this.createRequest(mail));
+    //Convert to Sendgrid requests
+    const requests = mails.map(mail => this.createRequest(mail));
 
     //Process all
     return Promise.map(requests, request => this.sg.API(request));
