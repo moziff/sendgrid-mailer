@@ -1,2 +1,2 @@
 # sendgrid-mailer
-A simple wrapper around the Sendgrid library to make sending emails easy again
+A simple wrapper around the official Sendgrid library to make sending emails easy again.

@@ -11,7 +11,7 @@ insert_final_newline = true
 trim_trailing_whitespace = true
 
 # JS
-[{*.js}]
+[*.js]
 quote_type = single
 curly_bracket_next_line = false
 spaces_around_operators = true
