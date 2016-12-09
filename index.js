@@ -13,7 +13,7 @@ const splitNameEmail = require('./helpers/split-name-email');
 /**
  * Interface
  */
-module.exports = {
+const mailer = module.exports = {
 
   //Promise implementation (can be overwritten)
   Promise: Promise,
@@ -37,7 +37,7 @@ module.exports = {
     }
 
     //Merge options
-    Object.assign(this.options, options || {});
+    Object.assign(mailer.options, options || {});
   },
 
   /**
@@ -46,19 +46,19 @@ module.exports = {
   load() {
 
     //Not loaded yet?
-    if (!this.sg) {
+    if (!mailer.sg) {
 
       //Must have API key
-      if (!this.options.apiKey) {
+      if (!mailer.options.apiKey) {
         throw new Error('Missing Sendgrid API key');
       }
 
       //Initialize
-      this.sg = sendgrid(this.options.apiKey);
+      mailer.sg = sendgrid(mailer.options.apiKey);
     }
 
     //Return
-    return this.sg;
+    return mailer.sg;
   },
 
   /**
@@ -113,18 +113,18 @@ module.exports = {
     const {to, from, subject, text, html} = data;
 
     //Convert sender and recipient to Email instances
-    const sender = this.createEmail(from);
-    const recipient = this.createEmail(to);
+    const sender = mailer.createEmail(from);
+    const recipient = mailer.createEmail(to);
 
     //Prepare objects
     const mail = new Mail();
-    const recipients = new Personalization();
+    const personalization = new Personalization();
 
     //Add recipient
-    recipients.addTo(recipient);
+    personalization.addTo(recipient);
 
     //Set personalisation, sender and subject
-    mail.addPersonalization(recipients);
+    mail.addPersonalization(personalization);
     mail.setFrom(sender);
     mail.setSubject(subject || '');
 
@@ -146,13 +146,14 @@ module.exports = {
   createRequest(mail) {
 
     //Ensure it's a Mail instance
-    mail = this.createMail(mail);
+    mail = mailer.createMail(mail);
 
     //Build request
-    const request = this.sg.emptyRequest();
-    request.method = 'POST';
-    request.path = '/v3/mail/send';
-    request.body = mail.toJSON();
+    const request = mailer.sg.emptyRequest({
+      method: 'POST',
+      path: '/v3/mail/send',
+      body: mail.toJSON(),
+    });
 
     //Return it
     return request;
@@ -163,8 +164,11 @@ module.exports = {
    */
   send(mails) {
 
+    //Get promise implementation
+    const Promise = mailer.Promise;
+
     //Load sendgrid instance on demand
-    this.load();
+    mailer.load();
 
     //Convert emails to array
     if (!Array.isArray(mails)) {
@@ -173,8 +177,8 @@ module.exports = {
 
     //Convert to Sendgrid requests
     const promises = mails
-      .map(mail => this.createRequest(mail))
-      .map(request => this.sg.API(request));
+      .map(mail => mailer.createRequest(mail))
+      .map(request => mailer.sg.API(request));
 
     //Process all
     return Promise.all(promises);
