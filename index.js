@@ -15,6 +15,9 @@ const splitNameEmail = require('./split-name-email');
  */
 module.exports = {
 
+  //Promise implementation (can be overwritten)
+  Promise: Promise,
+
   //Sendgrid instance
   sg: null,
 
@@ -168,9 +171,11 @@ module.exports = {
     }
 
     //Convert to Sendgrid requests
-    const requests = mails.map(mail => this.createRequest(mail));
+    const promises = mails
+      .map(mail => this.createRequest(mail))
+      .map(request => this.sg.API(request));
 
     //Process all
-    return Promise.map(requests, request => this.sg.API(request));
+    return Promise.all(promises);
   },
 };

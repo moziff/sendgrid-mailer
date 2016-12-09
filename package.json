@@ -26,16 +26,9 @@
   ],
   "main": "index.js",
   "scripts": {
-    "lint": "eslint . --fix",
     "postversion": "git push && git push --tags && npm publish"
-  },
-  "dependencies": {
-    "bluebird": "^3.4.6"
   },
   "peerDependencies": {
     "sendgrid": "^4.7.1"
-  },
-  "devDependencies": {
-    "eslint": "^3.11.1"
   }
 }

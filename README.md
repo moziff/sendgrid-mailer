@@ -23,7 +23,7 @@ yarn add sendgrid-mailer
 ```
 
 ## Requirements
-Written in ES6 for Node 6+.
+Written in ES6 for Node 6+, requires [sendgrid]() as a peer dependency.
 
 ## Usage
 
@@ -150,6 +150,12 @@ const sgRequest = mailer.createRequest(email);
 
 //Send it using the underlying API
 mailer.sg.API(request);
+```
+
+Lastly, you can overwrite the promise implementation you want the mailer to use. Defaults to ES6 `Promise`:
+
+```js
+mailer.Promise = require('bluebird');
 ```
 
 ### Contributing
