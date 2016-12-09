@@ -38,6 +38,9 @@ const mailer = module.exports = {
 
     //Merge options
     Object.assign(mailer.options, options || {});
+
+    //Return self
+    return mailer;
   },
 
   /**
