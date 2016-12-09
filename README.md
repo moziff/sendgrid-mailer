@@ -36,8 +36,8 @@ require('sendgrid-mailer').config(API_KEY);
 
 ### Simplest example
 ```js
-//Load mailer
-const mailer = require('sendgrid-mailer');
+//Load mailer and set API key (only needed once)
+const mailer = require('sendgrid-mailer').config(API_KEY);
 
 //Create email data
 const email = {
