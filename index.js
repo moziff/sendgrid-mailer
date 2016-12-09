@@ -8,7 +8,7 @@ const Mail = sendgrid.mail.Mail;
 const Email = sendgrid.mail.Email;
 const Content = sendgrid.mail.Content;
 const Personalization = sendgrid.mail.Personalization;
-const splitNameEmail = require('./split-name-email');
+const splitNameEmail = require('./helpers/split-name-email');
 
 /**
  * Interface
@@ -71,23 +71,24 @@ module.exports = {
       return identity;
     }
 
-    //Initialize
-    let name, email;
+    //No identity?
+    if (!identity) {
+      throw new Error('No identity provided');
+    }
 
     //Extract name and email if string given
     if (typeof identity === 'string') {
-      [name, email] = splitNameEmail(identity);
+      const [name, email] = splitNameEmail(identity);
+      identity = {name, email};
     }
 
-    //If object, extract
-    else if (typeof identity === 'object' && identity !== null) {
-      ({name, email}) = identity;
-    }
-
-    //Invalid
-    else {
+    //Check if object
+    if (typeof identity !== 'object') {
       throw new Error('Invalid identity provided: ' + identity);
     }
+
+    //Extract name and email
+    const {name, email} = identity;
 
     //Must have email
     if (!email) {
