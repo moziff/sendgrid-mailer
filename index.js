@@ -146,7 +146,9 @@ const mailer = module.exports = {
   createRequest(mail) {
 
     //Ensure it's a Mail instance
-    mail = mailer.createMail(mail);
+    if (!(mail instanceof Mail)) {
+      mail = mailer.createMail(mail);
+    }
 
     //Build request
     const request = mailer.sg.emptyRequest({
@@ -177,6 +179,7 @@ const mailer = module.exports = {
 
     //Convert to Sendgrid requests
     const promises = mails
+      .map(mail => mailer.createMail(mail))
       .map(mail => mailer.createRequest(mail))
       .map(request => mailer.sg.API(request));
 
