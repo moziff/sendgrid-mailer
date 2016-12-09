@@ -1,6 +1,6 @@
 {
   "name": "sendgrid-mailer",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "A simple wrapper around the official Sendgrid library to make sending emails easy again.",
   "homepage": "https://github.com/adamreisnz/sendgrid-mailer#readme",
   "author": {
