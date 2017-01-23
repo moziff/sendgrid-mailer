@@ -121,9 +121,28 @@ You can provide a template ID and substitutions:
 const email = {
   templateId: 'sendgrid-template-id',
   substitutions: {
-    '{{name}}': ['Some One', 'Else'],
-    '{{id}}': ['123', '456'],
+    '{{name}}': 'Some One',
+    '{{id}}': '123',
   },
+}
+```
+
+Or an array of substitutions if you have multiple recipients:
+
+```js
+const email = {
+  templateId: 'sendgrid-template-id',
+  to: ['someone@example.org', 'else@example.org'],
+  substitutions: [
+    {
+      '{{name}}': 'Some One',
+      '{{id}}': '123',
+    },
+    {
+      '{{name}}': 'Else',
+      '{{id}}': '456',
+    },
+  ],
 }
 ```
 

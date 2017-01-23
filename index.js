@@ -126,23 +126,32 @@ const mailer = module.exports = {
 
     //Prepare objects
     const mail = new Mail();
-    const personalization = new Personalization();
+
+    /**
+     * Helper to add personalization
+     */
+    function addPersonalization(recipient, substitutions) {
+      const personalization = new Personalization();
+      personalization.addTo(recipient);
+      if (substitutions) {
+        personalization.substitutions = substitutions;
+      }
+      mail.addPersonalization(personalization);
+    }
 
     //Add recipients
     if (Array.isArray(recipient)) {
-      recipient.forEach(identity => personalization.addTo(identity));
+      recipient.forEach((identity, i) => {
+        const sub = (substitutions && substitutions[i]) ?
+          substitutions[i] : null;
+        addPersonalization(identity, sub);
+      });
     }
     else {
-      personalization.addTo(recipient);
+      addPersonalization(recipient, substitutions);
     }
 
-    //Add substitutions
-    if (substitutions) {
-      personalization.substitutions = substitutions;
-    }
-
-    //Set personalisation, sender and subject
-    mail.addPersonalization(personalization);
+    //Set sender and subject
     mail.setFrom(sender);
     mail.setSubject(subject || '');
     mail.setTemplateId(templateId);
@@ -169,11 +178,25 @@ const mailer = module.exports = {
       mail = mailer.createMail(mail);
     }
 
+    //Get JSON body
+    const body = mail.toJSON();
+
+    //Ensure personalizations are JSON as well
+    if (body.personalizations) {
+      body.personalizations = body.personalizations
+        .map(p => {
+          if (typeof p.toJSON === 'function') {
+            return p.toJSON();
+          }
+          return p;
+        });
+    }
+
     //Build request
     const request = mailer.sg.emptyRequest({
       method: 'POST',
       path: '/v3/mail/send',
-      body: mail.toJSON(),
+      body,
     });
 
     //Return it
