@@ -110,13 +110,21 @@ const email = {
   //A Sendgrid Email instance
   to: new Email('someone@example.org', 'Some One'),
 
-  //Or an array of emails (with substitutions)
+  //Or an array of emails
   to: ['someone@example.org', 'else@example.org'],
+};
+```
+
+You can provide a template ID and substitutions:
+
+```js
+const email = {
+  templateId: 'sendgrid-template-id',
   substitutions: {
     '{{name}}': ['Some One', 'Else'],
     '{{id}}': ['123', '456'],
   },
-};
+}
 ```
 
 If needed, you can get direct access to the underlying Sendgrid instance:
