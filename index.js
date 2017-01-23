@@ -16,7 +16,7 @@ const splitNameEmail = require('./helpers/split-name-email');
 const mailer = module.exports = {
 
   //Promise implementation (can be overwritten)
-  Promise: Promise,
+  Promise,
 
   //Sendgrid instance
   sg: null,
@@ -69,6 +69,11 @@ const mailer = module.exports = {
    */
   createEmail(identity) {
 
+    //Array?
+    if (Array.isArray(identity)) {
+      return identity.map(item => mailer.createEmail(item));
+    }
+
     //Already an Email instance?
     if (identity instanceof Email) {
       return identity;
@@ -113,7 +118,7 @@ const mailer = module.exports = {
     }
 
     //Extract data
-    const {to, from, subject, text, html} = data;
+    const {to, from, subject, text, html, substitutions} = data;
 
     //Convert sender and recipient to Email instances
     const sender = mailer.createEmail(from);
@@ -123,8 +128,18 @@ const mailer = module.exports = {
     const mail = new Mail();
     const personalization = new Personalization();
 
-    //Add recipient
-    personalization.addTo(recipient);
+    //Add recipients
+    if (Array.isArray(recipient)) {
+      recipient.forEach(identity => personalization.addTo(identity));
+    }
+    else {
+      personalization.addTo(recipient);
+    }
+
+    //Add substitutions
+    if (substitutions) {
+      personalization.substitutions = substitutions;
+    }
 
     //Set personalisation, sender and subject
     mail.addPersonalization(personalization);

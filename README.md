@@ -107,8 +107,15 @@ const email = {
     email: 'someone@example.org',
   },
 
-  //Or a Sendgrid Email instance
+  //A Sendgrid Email instance
   to: new Email('someone@example.org', 'Some One'),
+
+  //Or an array of emails (with substitutions)
+  to: ['someone@example.org', 'else@example.org'],
+  substitutions: {
+    '{{name}}': ['Some One', 'Else'],
+    '{{id}}': ['123', '456'],
+  },
 };
 ```
 
@@ -124,8 +131,8 @@ You can use the mailer to quickly create Sendgrid `Mail` instances:
 ```js
 //Create email data
 const email = {
-  to: 'a@example.org',
-  from: 'b@example.org',
+  to: 'someone@example.org',
+  from: 'else@example.org',
   subject: 'Hello world',
   text: 'Hello plain world!',
   html: '<p>Hello HTML world!</p>',
