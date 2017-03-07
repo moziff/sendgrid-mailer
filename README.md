@@ -23,7 +23,7 @@ yarn add sendgrid-mailer
 ```
 
 ## Requirements
-Written in ES6 for Node 6+, requires [sendgrid]() as a peer dependency.
+Written in ES6 for Node 6+, requires [sendgrid](https://www.npmjs.com/package/sendgrid) as a peer dependency.
 
 ## Usage
 
