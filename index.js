@@ -118,7 +118,9 @@ const mailer = module.exports = {
     }
 
     //Extract data
-    const {to, from, subject, text, html, substitutions, templateId} = data;
+    const {
+      to, from, subject, text, html, substitutions, templateId, replyTo,
+    } = data;
 
     //Convert sender and recipient to Email instances
     const sender = mailer.createEmail(from);
@@ -155,6 +157,11 @@ const mailer = module.exports = {
     mail.setFrom(sender);
     mail.setSubject(subject || '');
     mail.setTemplateId(templateId);
+
+    //Reply to
+    if (replyTo) {
+      mail.setReplyTo(replyTo);
+    }
 
     //Add content as applicable
     if (text) {
