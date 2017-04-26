@@ -115,6 +115,14 @@ const email = {
 };
 ```
 
+You can provide a reply-to address:
+
+```js
+const email = {
+  replyTo: 'no-reply@example.org',
+}
+```
+
 You can provide a template ID and substitutions:
 
 ```js
