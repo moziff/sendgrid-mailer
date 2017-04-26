@@ -160,7 +160,7 @@ const mailer = module.exports = {
 
     //Reply to
     if (replyTo) {
-      mail.setReplyTo(replyTo);
+      mail.setReplyTo(this.createEmail(replyTo));
     }
 
     //Add content as applicable
