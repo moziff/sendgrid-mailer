@@ -16,7 +16,7 @@ const splitNameEmail = require('./helpers/split-name-email');
 const mailer = module.exports = {
 
   //Promise implementation (can be overwritten)
-  Promise,
+  Promise: Promise,
 
   //Sendgrid instance
   sg: null,
@@ -29,7 +29,7 @@ const mailer = module.exports = {
   /**
    * Configure
    */
-  config(options) {
+  config: (options)=>{
 
     //String given? Assume only API key
     if (typeof options === 'string') {
@@ -46,7 +46,7 @@ const mailer = module.exports = {
   /**
    * Load sendgrid instance
    */
-  load() {
+  load: ()=> {
 
     //Not loaded yet?
     if (!mailer.sg) {
@@ -67,7 +67,7 @@ const mailer = module.exports = {
   /**
    * Create Sendgrid Email instance
    */
-  createEmail(identity) {
+  createEmail: (identity)=> {
 
     //Array?
     if (Array.isArray(identity)) {
@@ -110,7 +110,7 @@ const mailer = module.exports = {
   /**
    * Create a Sendgrid Mail instance
    */
-  createMail(data) {
+  createMail:(data) =>{
 
     //Already a Sendgrid Mail instance?
     if (data instanceof Mail) {
@@ -178,7 +178,7 @@ const mailer = module.exports = {
   /**
    * Create a Sendgrid Request instance
    */
-  createRequest(mail) {
+  createRequest:(mail)=> {
 
     //Ensure it's a Mail instance
     if (!(mail instanceof Mail)) {
@@ -213,7 +213,7 @@ const mailer = module.exports = {
   /**
    * Send one or more emails
    */
-  send(mails) {
+  send:(mails)=> {
 
     //Get promise implementation
     const Promise = mailer.Promise;
