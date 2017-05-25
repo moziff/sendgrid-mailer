@@ -29,7 +29,7 @@ const mailer = module.exports = {
   /**
    * Configure
    */
-  config: (options)=>{
+  config: function(options){
 
     //String given? Assume only API key
     if (typeof options === 'string') {
@@ -46,7 +46,7 @@ const mailer = module.exports = {
   /**
    * Load sendgrid instance
    */
-  load: ()=> {
+  load: function() {
 
     //Not loaded yet?
     if (!mailer.sg) {
@@ -67,7 +67,7 @@ const mailer = module.exports = {
   /**
    * Create Sendgrid Email instance
    */
-  createEmail: (identity)=> {
+  createEmail: function(identity) {
 
     //Array?
     if (Array.isArray(identity)) {
@@ -110,7 +110,7 @@ const mailer = module.exports = {
   /**
    * Create a Sendgrid Mail instance
    */
-  createMail:(data) =>{
+  createMail: function(data){
 
     //Already a Sendgrid Mail instance?
     if (data instanceof Mail) {
@@ -178,7 +178,7 @@ const mailer = module.exports = {
   /**
    * Create a Sendgrid Request instance
    */
-  createRequest:(mail)=> {
+  createRequest: function(mail) {
 
     //Ensure it's a Mail instance
     if (!(mail instanceof Mail)) {
@@ -213,7 +213,7 @@ const mailer = module.exports = {
   /**
    * Send one or more emails
    */
-  send:(mails)=> {
+  send: function(mails) {
 
     //Get promise implementation
     const Promise = mailer.Promise;
